@@ -559,7 +559,7 @@ const IQubeNFTMinter: React.FC = () => {
               onClick={() => handleToggle('memberProfile')}
             >
               <CircleUser color="blue" className="mr-[10px]" />
-              <h5 className={`text-[blue] text-[12px]`}>Member Profile</h5>
+              <h5 className={`text-[blue] text-[12px]`}>Data Qube</h5>
             </div>
             <div
               className={`${
@@ -568,7 +568,7 @@ const IQubeNFTMinter: React.FC = () => {
               onClick={() => handleToggle('mediaBlob')}
             >
               <FileLock2 color="blue" className="mr-[10px]" />
-              <h5 className={`text-[blue] text-[12px]`}>Upload Blob</h5>
+              <h5 className={`text-[blue] text-[12px]`}>Content Qube</h5>
             </div>
             <div
               className={`${
@@ -586,7 +586,7 @@ const IQubeNFTMinter: React.FC = () => {
               onClick={() => handleToggle('crosschain')}
             >
               <FileLock2 color="blue" className="mr-[10px]" />
-              <h5 className={`text-[blue] text-[12px]`}>Cross Chain</h5>
+              <h5 className={`text-[blue] text-[12px]`}>Qube Transfer</h5>
             </div>
           </div>
           {uploadType === 'mediaBlob' ? (
@@ -715,7 +715,7 @@ const IQubeNFTMinter: React.FC = () => {
                 }`}
               >
                 <FileLock className="mr-[10px]" />
-                {isLoading ? 'Encrypting...' : 'Encrypt Member Profile'}
+                {isLoading ? 'Encrypting...' : 'Encrypt BlakQube'}
               </button>
             </form>
           ) : null}
@@ -755,7 +755,7 @@ const IQubeNFTMinter: React.FC = () => {
                 </a>
               )}
               <hr className="my-[50px]" />
-              <h2 className="font-bold text-[23px]">Decrypt Content</h2>
+              <h2 className="font-bold text-[23px]">Decrypt BlakQube</h2>
               <button
                 onClick={handleDecrypt}
                 disabled={isLoading}
@@ -770,7 +770,7 @@ const IQubeNFTMinter: React.FC = () => {
                   rel="noopener noreferrer"
                   className=" text-[blue] underline"
                 >
-                  See Decrypted Information Data.
+                  See Decrypted BlakQube.
                 </a>
               )}
             </>
@@ -788,7 +788,7 @@ const IQubeNFTMinter: React.FC = () => {
                 </a>
               )}
               <hr className="my-[50px]" />
-              <h2 className="font-bold text-[23px]">Decrypt Member Data</h2>
+              <h2 className="font-bold text-[23px]">Decrypt BlakQube</h2>
               <button
                 onClick={handleMemberDataDecryption}
                 disabled={isLoading}
@@ -803,7 +803,7 @@ const IQubeNFTMinter: React.FC = () => {
                   rel="noopener noreferrer"
                   className=" text-[blue] underline"
                 >
-                  See Decrypted Information Data.
+                  See Decrypted BlakQube.
                 </a>
               )}
               <div className="px-[50px]">
