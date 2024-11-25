@@ -235,7 +235,7 @@ export default function AvalancheMinter() {
       let _blakQube = _memberProfile.blakQube
 
       let { data } = await axios.post(
-        `https://icubes.onrender.com/encrypt-member-qube`,
+        `https://iqubes-server.onrender.com/encrypt-member-qube`,
         _blakQube,
       )
 
@@ -298,7 +298,7 @@ export default function AvalancheMinter() {
   const getEncryptionData = async (uri: string) => {
     try {
       let http = await axios.post(
-        'https://icubes.onrender.com/get-encryption-key',
+        'https://iqubes-server.onrender.com/get-encryption-key',
         {
           uri,
         },
@@ -311,10 +311,13 @@ export default function AvalancheMinter() {
 
   const decryptData = async (key: string, encryptedText: string) => {
     try {
-      let http = await axios.post('https://icubes.onrender.com/decrypt', {
-        key,
-        encryptedText,
-      })
+      let http = await axios.post(
+        'https://iqubes-server.onrender.com/decrypt',
+        {
+          key,
+          encryptedText,
+        },
+      )
       return http.data
     } catch (error) {
       console.log(error)
@@ -522,7 +525,7 @@ export default function AvalancheMinter() {
 
       // Decrypt the content using the encryption key
       let { data } = await axios.post(
-        `https://icubes.onrender.com/decrypt-member-data`,
+        `https://iqubes-server.onrender.com/decrypt-member-data`,
         {
           key: encryptionKey,
           encryptedData: blakQube,
