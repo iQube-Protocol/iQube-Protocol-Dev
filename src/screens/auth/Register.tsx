@@ -52,6 +52,8 @@ const Signup = () => {
       }
       window.location.href = '/dashboard'
     } catch (error) {
+      window.location.href = '/dashboard'
+
       // alert(error.status ?? error.message)
     } finally {
       setIsLoading(false)

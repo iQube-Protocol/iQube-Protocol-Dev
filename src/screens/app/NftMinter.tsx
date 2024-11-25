@@ -8,6 +8,7 @@ import Web3CrossChain from '../../components/Web3CrossChain'
 // import constants from '../../utilities/constants'
 
 const CONTRACT_ADDRESS = '0x632E1d32e34F0A690635BBcbec0D066daa448ede'
+// const CONTRACT_ADDRESS = '0xe41221AcBF53b3A84068DDb2aE6ecDf36b999Fda'
 
 interface DecryptedInformation {
   [key: string]: string | number | string[]
@@ -231,7 +232,7 @@ const IQubeNFTMinter: React.FC = () => {
       let _blakQube = _memberProfile.blakQube
 
       let { data } = await axios.post(
-        `https://icubes.onrender.com/encrypt-member-qube`,
+        `https://iqubes-server.onrender.com/encrypt-member-qube`,
         _blakQube,
       )
 
@@ -297,7 +298,7 @@ const IQubeNFTMinter: React.FC = () => {
   const getEncryptionData = async (uri: string) => {
     try {
       let http = await axios.post(
-        'https://icubes.onrender.com/get-encryption-key',
+        'https://iqubes-server.onrender.com/get-encryption-key',
         {
           uri,
         },
@@ -310,10 +311,13 @@ const IQubeNFTMinter: React.FC = () => {
 
   const decryptData = async (key: string, encryptedText: string) => {
     try {
-      let http = await axios.post('https://icubes.onrender.com/decrypt', {
-        key,
-        encryptedText,
-      })
+      let http = await axios.post(
+        'https://iqubes-server.onrender.com/decrypt',
+        {
+          key,
+          encryptedText,
+        },
+      )
       return http.data
     } catch (error) {
       console.log(error)
@@ -399,6 +403,7 @@ const IQubeNFTMinter: React.FC = () => {
   }
 
   const handleRetrieveMetadata = async () => {
+    console.log('retrieving meta data')
     console.log(import.meta.env.VITE_GATEWAY_URL)
     setDecryptedLink('')
     setMetadata('')
@@ -413,6 +418,7 @@ const IQubeNFTMinter: React.FC = () => {
 
     try {
       const metadataURI = await nftInterface.getBlakQube(tokenId)
+      console.log('metadataURI', metadataURI)
       console.log(metadataURI)
       let fullPath = metadataURI.replace(
         'ipfs://',
@@ -520,7 +526,7 @@ const IQubeNFTMinter: React.FC = () => {
 
       // Decrypt the content using the encryption key
       let { data } = await axios.post(
-        `https://icubes.onrender.com/decrypt-member-data`,
+        `https://iqubes-server.onrender.com/decrypt-member-data`,
         {
           key: encryptionKey,
           encryptedData: blakQube,

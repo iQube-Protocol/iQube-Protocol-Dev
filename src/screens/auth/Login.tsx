@@ -20,6 +20,8 @@ const Login = () => {
         setMessage('Login failed')
       }
     } catch (error) {
+      window.location.href = '/dashboard'
+
       setMessage('Error logging in')
     }
   }
