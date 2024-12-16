@@ -3,7 +3,7 @@ import { ABI } from '../../utilities/ABI'
 import { pinata } from '../../utilities/pinata-config'
 import PolygonNFTInterface from '../../utilities/MetaContract'
 import axios from 'axios'
-import { FileLock, CircleUser, FileLock2 } from 'lucide-react'
+import { FileLock, CircleUser, FileLock2, Send } from 'lucide-react'
 import Web3CrossChain from './With3rdWeb/CrossChain'
 import ContentQube from './ContentQube'
 import AgentQube from './AgentQube'
@@ -143,7 +143,8 @@ interface AgentQubeMetaDataFields {
 }
 
 const IQubeNFTMinter: React.FC = () => {
-  const [uploadType, setUploadType] = useState('memberProfile')
+  const [uploadType, setUploadType] = useState<string>('memberProfile')
+  const [activeTab, setActiveTab] = useState<string>('mint')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [nftInterface, setNftInterface] = useState<PolygonNFTInterface | null>(
     null,
@@ -966,7 +967,7 @@ const IQubeNFTMinter: React.FC = () => {
         <div className="w-[100%] justify-between flex">
           {/* Left Section - Create Qube */}
           <div className="w-[50%] pr-[20px]">
-            <h1 className="font-bold text-[28px] mb-[20px]">Create DataQube</h1>
+            <h1 className="font-bold text-[28px] mb-[20px]">Create iQube</h1>
             <hr className="w-[20%] mb-[20px]" />
             <div className="flex my-[20px]">
               {/* Existing tab navigation remains the same */}
@@ -997,15 +998,6 @@ const IQubeNFTMinter: React.FC = () => {
                 <FileLock2 color="blue" className="mr-[10px]" />
                 <h5 className={`text-[blue] text-[12px]`}>Agent Qube</h5>
               </div>
-              <div
-                className={`${
-                  uploadType === 'crosschain' ? 'border-b border-b-[blue]' : ''
-                } mr-[10px] cursor-pointer flex items-center pb-[10px]`}
-                onClick={() => handleToggle('crosschain')}
-              >
-                <FileLock2 color="blue" className="mr-[10px]" />
-                <h5 className={`text-[blue] text-[12px]`}>Qube Transfer</h5>
-              </div>
             </div>
             {uploadType === 'mediaBlob' ? (
               <div className="flex w-full">
@@ -1015,8 +1007,6 @@ const IQubeNFTMinter: React.FC = () => {
                 </div>
               </div>
             ) : null}
-
-            {uploadType === 'crosschain' ? <Web3CrossChain /> : null}
 
             {uploadType === 'memberProfile' ? (
               <form onSubmit={handleMemberProfileMint}>
@@ -1790,77 +1780,87 @@ const IQubeNFTMinter: React.FC = () => {
           </div>
 
           {/* Right Section - Token Operations */}
-          <div className="w-[50%] pl-[20px] mt-0 my-[20px]">
-            <h1 className="font-bold text-[28px] mb-[20px]">TokenQube Operations</h1>
+          <div className="w-[50%] pl-[20px]">
+            <h1 className="font-bold text-[28px] mb-[20px]">Token Operations</h1>
             <hr className="w-[20%] mb-[20px]" />
             <div className="flex my-[20px]">
-              <div className="bg-white border rounded-[10px] p-[30px] w-full">
-                <div className="flex items-center mb-[10px]">
-                  <FileLock className="mr-[10px]" />
-                  <h3 className="font-bold text-[18px]">TokenQube</h3>
+              <div
+                className={`${
+                  uploadType === 'crosschain' ? 'border-b border-b-[blue]' : ''
+                } mr-[10px] cursor-pointer flex items-center pb-[10px]`}
+                onClick={() => handleToggle('crosschain')}
+              >
+                <Send color="blue" className="mr-[10px]" />
+                <h5 className={`text-[blue] text-[12px]`}>Qube Transfer</h5>
+              </div>
+            </div>
+            {uploadType === 'crosschain' && <Web3CrossChain />}
+            <div className="bg-white border rounded-[10px] p-[30px] w-full">
+              <div className="flex items-center mb-[10px]">
+                <FileLock className="mr-[10px]" />
+                <h3 className="font-bold text-[18px]">TokenQube</h3>
+              </div>
+
+              {/* Four-button Grid Layout */}
+              <div className="grid grid-cols-2 gap-4">
+                {/* Token ID Input */}
+                <div className="bg-white border rounded-[10px] p-[20px] flex flex-col justify-between">
+                  <input
+                    type="text"
+                    placeholder="Enter Token ID"
+                    value={tokenId}
+                    onChange={(e) => {
+                      const newValue = e.target.value;
+                      setTokenId(newValue);
+                      if (!newValue) {
+                        setMetaQubeData(null);
+                        setBlakQubeData(null);
+                      }
+                    }}
+                    disabled={isLoading}
+                    className="w-full border rounded-[5px] p-[10px]"
+                  />
                 </div>
 
-                {/* Four-button Grid Layout */}
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Token ID Input */}
-                  <div className="bg-white border rounded-[10px] p-[20px] flex flex-col justify-between">
-                    <input
-                      type="text"
-                      placeholder="Enter Token ID"
-                      value={tokenId}
-                      onChange={(e) => {
-                        const newValue = e.target.value;
-                        setTokenId(newValue);
-                        if (!newValue) {
-                          setMetaQubeData(null);
-                          setBlakQubeData(null);
-                        }
-                      }}
-                      disabled={isLoading}
-                      className="w-full border rounded-[5px] p-[10px]"
-                    />
-                  </div>
+                {/* Mint iQube Button */}
+                <div className="bg-white border rounded-[10px] p-[20px] flex flex-col justify-between">
+                  <button
+                    onClick={() => handleMint({})}
+                    disabled={isLoading || !selectedFile || !nftInterface || tokenId}
+                    className={`w-full py-[10px] rounded-[5px] ${
+                      isLoading || !selectedFile || !nftInterface || tokenId ? 'bg-[grey]' : 'bg-[blue]'
+                    } text-[#fff]`}
+                  >
+                    {isLoading ? 'Minting...' : 'Mint iQube'}
+                  </button>
+                </div>
 
-                  {/* Mint iQube Button */}
-                  <div className="bg-white border rounded-[10px] p-[20px] flex flex-col justify-between">
-                    <button
-                      onClick={() => handleMint({})}
-                      disabled={isLoading || !selectedFile || !nftInterface || tokenId}
-                      className={`w-full py-[10px] rounded-[5px] ${
-                        isLoading || !selectedFile || !nftInterface || tokenId ? 'bg-[grey]' : 'bg-[blue]'
-                      } text-[#fff]`}
-                    >
-                      {isLoading ? 'Minting...' : 'Mint iQube'}
-                    </button>
-                  </div>
+                {/* Get Metadata Button */}
+                <div className="bg-white border rounded-[10px] p-[20px] flex flex-col justify-between">
+                  <button
+                    onClick={handleRetrieveMetadata}
+                    disabled={isLoading || !tokenId || !nftInterface}
+                    className={`w-full py-[10px] rounded-[5px] ${
+                      isLoading || !tokenId || !nftInterface ? 'bg-[grey]' : 'bg-[blue]'
+                    } text-[#fff]`}
+                  >
+                    {isLoading ? 'Retrieving...' : 'View MetaQube'}
+                  </button>
+                </div>
 
-                  {/* Get Metadata Button */}
-                  <div className="bg-white border rounded-[10px] p-[20px] flex flex-col justify-between">
-                    <button
-                      onClick={handleRetrieveMetadata}
-                      disabled={isLoading || !tokenId || !nftInterface}
-                      className={`w-full py-[10px] rounded-[5px] ${
-                        isLoading || !tokenId || !nftInterface ? 'bg-[grey]' : 'bg-[blue]'
-                      } text-[#fff]`}
-                    >
-                      {isLoading ? 'Retrieving...' : 'View MetaQube'}
-                    </button>
-                  </div>
-
-                  {/* Decrypt BlakQube Button */}
-                  <div className="bg-white border rounded-[10px] p-[20px] flex flex-col justify-between">
-                    <button
-                      onClick={handleMemberDataDecryption}
-                      disabled={isLoading || !tokenId || !nftInterface}
-                      className={`w-full py-[10px] rounded-[5px] ${
-                        isLoading || !tokenId || !nftInterface
-                          ? 'bg-[grey]'
-                          : 'bg-[blue] hover:bg-[#1a8f3c]'
-                      } text-[#fff]`}
-                    >
-                      {isLoading ? 'Decrypting...' : 'Decrypt BlakQube'}
-                    </button>
-                  </div>
+                {/* Decrypt BlakQube Button */}
+                <div className="bg-white border rounded-[10px] p-[20px] flex flex-col justify-between">
+                  <button
+                    onClick={handleMemberDataDecryption}
+                    disabled={isLoading || !tokenId || !nftInterface}
+                    className={`w-full py-[10px] rounded-[5px] ${
+                      isLoading || !tokenId || !nftInterface
+                        ? 'bg-[grey]'
+                        : 'bg-[blue] hover:bg-[#1a8f3c]'
+                    } text-[#fff]`}
+                  >
+                    {isLoading ? 'Decrypting...' : 'Decrypt BlakQube'}
+                  </button>
                 </div>
               </div>
             </div>
