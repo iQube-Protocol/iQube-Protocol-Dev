@@ -761,32 +761,14 @@ const IQubeNFTMinter: React.FC = () => {
   }
 
   const handleMemberDataDecryption = async () => {
-    if (!tokenId || !nftInterface) {
-      setError('Missing required information')
-      return
-    }
-
     setIsLoading(true)
     setError('')
-    setDecryptedLink('')
     try {
-      // First, verify ownership
-      const owner = await nftInterface.ownerOf(tokenId)
-      if (owner.toLowerCase() !== account.toLowerCase()) {
-        throw new Error('You are not the owner of this token')
-      }
-
-      // Get the encryption key from the toknQube NFT
-      console.log('Retrieving encryption key for token:', tokenId)
-      const encryptionKey = await nftInterface.getEncryptionKey(tokenId)
-      console.log('Encryption key retrieved:', encryptionKey)
-
-      if (!encryptionKey) {
-        throw new Error('Failed to retrieve encryption key')
+      if (!nftInterface || !account) {
+        throw new Error('NFT interface not initialized or wallet not connected')
       }
 
       // Get the metadata URI using getBlakQube
-      console.log('Retrieving metadata location')
       const metadataURI = await nftInterface.getBlakQube(tokenId)
       console.log('Fetching metadata from:', metadataURI)
 
@@ -796,86 +778,79 @@ const IQubeNFTMinter: React.FC = () => {
           `${import.meta.env.VITE_GATEWAY_URL}/ipfs/`,
         ),
       )
-      
+
       if (!metadataResponse.ok) {
         throw new Error(`Failed to fetch metadata: ${metadataResponse.statusText}`)
       }
 
       const metadata = await metadataResponse.json()
       console.log('Metadata retrieved:', metadata)
-      
-      // Get the encrypted data from metadata
-      let encryptedData = null
-      
-      // First check if there's a direct blakQube property
-      if (metadata.blakQube) {
-        encryptedData = metadata.blakQube
-      } else if (metadata.attributes) {
-        // Look for blakQube in attributes array
-        const blakQubeAttr = metadata.attributes.find(
-          (attr: any) => attr.trait_type === 'blakQube'
-        )
-        if (blakQubeAttr?.value) {
-          encryptedData = blakQubeAttr.value
-        }
-      }
 
-      // If no encrypted data found in blakQube, check the image field for ContentQube
-      if (!encryptedData && metadata.image) {
-        const metaQubeAttr = metadata.attributes?.find(
-          (attr: any) => attr.trait_type === 'metaQube'
-        )
-        // If we have a metaQube attribute, this is a ContentQube
-        if (metaQubeAttr) {
-          console.log('ContentQube detected, using image field as encrypted data')
-          encryptedData = metadata.image
-        }
-      }
-
-      if (!encryptedData) {
-        console.error('Full metadata structure:', JSON.stringify(metadata, null, 2))
-        throw new Error('Could not find encrypted data in metadata')
-      }
-      
-      console.log('Attempting decryption with:', {
-        key: encryptionKey,
-        encryptedData: encryptedData
-      })
-      
-      const response = await axios.post(
-        `https://iqubes-server.onrender.com/decrypt-member-data`,
-        {
-          key: encryptionKey,
-          encryptedData: encryptedData,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
+      // Find the blakQube attribute
+      const blakQubeAttribute = metadata.attributes?.find(
+        (attr: any) => attr.trait_type === 'blakQube'
       )
 
-      console.log('Server response:', response.data)
+      if (!blakQubeAttribute) {
+        throw new Error('No blakQube data found in metadata')
+      }
 
-      if (response.data && response.data.decryptedData) {
-        console.log('Decryption successful, data:', response.data.decryptedData)
-        setDecryptedInfo(response.data.decryptedData)
-        setDecryptedData(response.data.decryptedData)
-        setBlakQubeData(response.data.decryptedData)
-        setEncryptedBlakQubeData(encryptedData)
-        setError('')
-      } else {
-        console.error('Server response missing decrypted data:', response.data)
-        throw new Error('Server response missing decrypted data')
+      try {
+        console.log('Attempting to decrypt with tokenId:', tokenId)
+        console.log('BlakQube value:', blakQubeAttribute.value)
+        
+        // Get the encryption key first
+        let encryptionKey
+        try {
+          encryptionKey = await nftInterface.getEncryptionKey(tokenId)
+        } catch (keyError: any) {
+          // Check specifically for Web3 JSON-RPC error
+          if (keyError.message?.includes('Internal JSON-RPC error')) {
+            throw new Error('You cannot decrypt this blakQube as you do not own its token')
+          }
+          throw keyError
+        }
+
+        console.log('Encryption key retrieved:', encryptionKey)
+
+        if (!encryptionKey) {
+          throw new Error('Failed to retrieve encryption key')
+        }
+
+        // Make the decryption request to the server
+        const response = await axios.post(
+          `${import.meta.env.VITE_SERVER_URL}/decrypt-member-data`,
+          {
+            key: encryptionKey,
+            encryptedData: blakQubeAttribute.value,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        )
+
+        console.log('Server response:', response.data)
+
+        if (response.data && response.data.decryptedData) {
+          console.log('Decryption successful:', response.data.decryptedData)
+          setBlakQubeData(response.data.decryptedData)
+        } else {
+          throw new Error('Server response missing decrypted data')
+        }
+      } catch (decryptError: any) {
+        console.error('Full decryption error:', decryptError)
+        // If it's our custom error message, throw it as is
+        if (decryptError.message?.includes('You cannot decrypt this blakQube')) {
+          throw decryptError
+        }
+        // For other errors, throw the original error
+        throw decryptError
       }
     } catch (error: any) {
       console.error('Decryption error:', error)
-      console.error('Error response:', error.response?.data)
-      const errorMessage = error.response?.data?.message || error.message || 'An unknown error occurred'
-      setError(`Decryption failed: ${errorMessage}`)
-      setDecryptedInfo(null)
-      setDecryptedData(null)
-      setBlakQubeData(null)
+      setError(error.message || 'Failed to decrypt data')
     } finally {
       setIsLoading(false)
     }
