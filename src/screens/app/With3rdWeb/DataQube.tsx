@@ -243,28 +243,35 @@ const DataQube: React.FC = () => {
       </div>
       <div className="flex flex-row">
         <div className="w-[50%]">
-          <h4 className="font-bold text-[13px] my-[20px]">MetaQube</h4>
-          <hr className="w-[90%] my-[10px]" />
+          <div className="mb-4 p-4 bg-gray-100 rounded-lg">
+            <h3 className="text-lg font-semibold mb-2 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-[10px] text-green-500">
+                <path d="M18 1.5c-2.9 0-5.25 2.35-5.25 5.25v3h-7.5a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3a3.75 3.75 0 1 1 7.5 0v1.5h1.5v-1.5c0-2.9-2.35-5.25-5.25-5.25Z" />
+              </svg>
+              MetaQube
+            </h3>
+            <div className="grid grid-cols-2 gap-4">
+              {Object.entries(memberProfile.metaQube).map(([key, value]) => (
+                <MetadataInput
+                  key={key}
+                  field={key}
+                  value={value}
+                  onChange={(newValue) =>
+                    setMemberProfile((prev) => ({
+                      ...prev,
+                      metaQube: { ...prev.metaQube, [key]: newValue },
+                    }))
+                  }
+                  disabled={isLoading}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
       <div className="flex flex-row">
         <form className="w-[50%]" onSubmit={handleMemberProfileMint}>
           <div className="flex flex-wrap">
-            {Object.entries(memberProfile.metaQube).map(([key, value]) => (
-              <MetadataInput
-                key={key}
-                field={key}
-                value={value}
-                onChange={(newValue) =>
-                  setMemberProfile((prev) => ({
-                    ...prev,
-                    metaQube: { ...prev.metaQube, [key]: newValue },
-                  }))
-                }
-                disabled={isLoading}
-              />
-            ))}
-
             <div className="w-[100%]">
               <h4 className="font-bold text-[13px] my-[20px]">BlakQube</h4>
               <hr className="w-[90%] my-[10px]" />

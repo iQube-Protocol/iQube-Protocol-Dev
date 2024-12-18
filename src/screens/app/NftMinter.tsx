@@ -3,7 +3,7 @@ import { ABI } from '../../utilities/ABI'
 import { pinata } from '../../utilities/pinata-config'
 import PolygonNFTInterface from '../../utilities/MetaContract'
 import axios from 'axios'
-import { FileLock, CircleUser, FileLock2, Send } from 'lucide-react'
+import { CircleUser, FileLock2, Send } from 'lucide-react'
 import Web3CrossChain from './With3rdWeb/CrossChain'
 import ContentQube from './ContentQube'
 import AgentQube from './AgentQube'
@@ -978,7 +978,10 @@ const IQubeNFTMinter: React.FC = () => {
               <div className="flex w-full">
                 {/* Left Section - Content Form */}
                 <div className="w-full">
-                  <ContentQube onContentChange={(content) => handleMint(content)} />
+                  <ContentQube 
+                    nftInterface={nftInterface}
+                    onContentChange={(content) => handleMint(content)} 
+                  />
                 </div>
               </div>
             ) : null}
@@ -988,7 +991,9 @@ const IQubeNFTMinter: React.FC = () => {
                 {/* MetaQube Section */}
                 <div className="bg-[#f6f6f6] p-6 rounded-lg">
                   <div className="flex items-center mb-[10px]">
-                    <FileLock className="mr-[10px]" />
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-[10px] text-blue-500">
+                      <path fillRule="evenodd" d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3c0-2.9-2.35-5.25-5.25-5.25Zm3.75 8.25v-3a3.75 3.75 0 1 0-7.5 0v3h7.5Z" clipRule="evenodd" />
+                    </svg>
                     <h3 className="font-bold text-[18px]">MetaQube</h3>
                   </div>
 
@@ -1245,7 +1250,9 @@ const IQubeNFTMinter: React.FC = () => {
                 {/* BlakQube Section */}
                 <div className="bg-[#f6f6f6] p-6 rounded-lg mt-6">
                   <div className="flex items-center mb-[10px]">
-                    <FileLock className="mr-[10px]" />
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-[10px] text-red-500">
+                      <path fillRule="evenodd" d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3c0-2.9-2.35-5.25-5.25-5.25Zm3.75 8.25v-3a3.75 3.75 0 1 0-7.5 0v3h7.5Z" clipRule="evenodd" />
+                    </svg>
                     <h3 className="font-bold text-[18px]">BlakQube</h3>
                   </div>
 
@@ -1283,11 +1290,10 @@ const IQubeNFTMinter: React.FC = () => {
 
                 <button
                   disabled={isLoading}
-                  className={`w-[200px] mt-[20px] text-[12px] flex items-center justify-center ${
+                  className={`w-full p-[10px] rounded-[5px] ${
                     isLoading ? 'bg-[grey]' : 'bg-[blue]'
-                  }`}
+                  } text-[#fff]`}
                 >
-                  <FileLock className="mr-[10px]" />
                   {isLoading ? 'Encrypting...' : 'Encrypt BlakQube'}
                 </button>
               </form>
@@ -1298,7 +1304,9 @@ const IQubeNFTMinter: React.FC = () => {
                 {/* MetaQube Section */}
                 <div className="bg-[#f6f6f6] p-6 rounded-lg">
                   <div className="flex items-center mb-[10px]">
-                    <FileLock className="mr-[10px]" />
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-[10px] text-blue-500">
+                      <path fillRule="evenodd" d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3c0-2.9-2.35-5.25-5.25-5.25Zm3.75 8.25v-3a3.75 3.75 0 1 0-7.5 0v3h7.5Z" clipRule="evenodd" />
+                    </svg>
                     <h3 className="font-bold text-[18px]">MetaQube</h3>
                   </div>
 
@@ -1555,7 +1563,9 @@ const IQubeNFTMinter: React.FC = () => {
                 {/* BlakQube Section */}
                 <div className="bg-[#f6f6f6] p-6 rounded-lg mt-6">
                   <div className="flex items-center mb-[10px]">
-                    <FileLock className="mr-[10px]" />
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-[10px] text-red-500">
+                      <path fillRule="evenodd" d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3c0-2.9-2.35-5.25-5.25-5.25Zm3.75 8.25v-3a3.75 3.75 0 1 0-7.5 0v3h7.5Z" clipRule="evenodd" />
+                    </svg>
                     <h3 className="font-bold text-[18px]">BlakQube</h3>
                   </div>
 
@@ -1742,11 +1752,10 @@ const IQubeNFTMinter: React.FC = () => {
 
                 <button
                   disabled={isLoading}
-                  className={`w-[200px] mt-[20px] text-[12px] flex items-center justify-center ${
+                  className={`w-full p-[10px] rounded-[5px] ${
                     isLoading ? 'bg-[grey]' : 'bg-[blue]'
-                  }`}
+                  } text-[#fff]`}
                 >
-                  <FileLock className="mr-[10px]" />
                   {isLoading ? 'Encrypting...' : 'Encrypt BlakQube'}
                 </button>
               </form>
@@ -1772,7 +1781,9 @@ const IQubeNFTMinter: React.FC = () => {
             {uploadType === 'crosschain' && <Web3CrossChain />}
             <div className="bg-white border rounded-[10px] p-[30px] w-full">
               <div className="flex items-center mb-[10px]">
-                <FileLock className="mr-[10px]" />
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-[10px] text-blue-500">
+                  <path fillRule="evenodd" d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3c0-2.9-2.35-5.25-5.25-5.25Zm3.75 8.25v-3a3.75 3.75 0 1 0-7.5 0v3h7.5Z" clipRule="evenodd" />
+                </svg>
                 <h3 className="font-bold text-[18px]">TokenQube</h3>
               </div>
 
