@@ -246,7 +246,7 @@ const DataQube: React.FC = () => {
           <div className="mb-4 p-4 bg-gray-100 rounded-lg">
             <h3 className="text-lg font-semibold mb-2 flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 mr-[10px] text-green-500">
-                <path d="M18 1.5c-2.9 0-5.25 2.35-5.25 5.25v3h-7.5a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3a3.75 3.75 0 1 1 7.5 0v1.5h1.5v-1.5c0-2.9-2.35-5.25-5.25-5.25Z" />
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.59-12.42L10 14.17l-2.59-2.59c-.63-.63-.18-1.71.63-1.71H16c.63 0 1.17.46 1.17 1.17v1.17c0 .63-.46 1.17-1.17 1.17H9.41c-.63 0-1.17-.46-1.17-1.17v-.63c.63-.63 1.71-.18 1.71.63l2.59 2.59z" />
               </svg>
               MetaQube
             </h3>
@@ -360,7 +360,9 @@ const MetadataInput: React.FC<{
   disabled: boolean
 }> = ({ field, value, onChange, disabled }) => (
   <div className="w-[30%]">
-    <label className="block text-[12px]">{field}: </label>
+    <label className="block text-[12px]">
+      {field.replace('Score', '')}: 
+    </label>
     <input
       type={typeof value === 'number' ? 'number' : 'text'}
       value={value}

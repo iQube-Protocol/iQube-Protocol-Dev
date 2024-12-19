@@ -1763,9 +1763,9 @@ const IQubeNFTMinter: React.FC = () => {
 
           </div>
 
-          {/* Right Section - Token Operations */}
+          {/* Right Section - TokenQube Operations */}
           <div className="w-[50%] pl-[20px]">
-            <h1 className="font-bold text-[28px] mb-[20px]">Token Operations</h1>
+            <h1 className="font-bold text-[28px] mb-[20px]">TokenQube Operations</h1>
             <hr className="w-[20%] mb-[20px]" />
             <div className="flex my-[20px]">
               <div
