@@ -1,0 +1,14 @@
+[build]
+  command = "npm run build:staging"
+  publish = "dist"
+
+[context.staging]
+  environment = { 
+    VITE_APP_ENV = "staging", 
+    VITE_API_BASE_URL = "https://api.staging.iqube.network" 
+  }
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

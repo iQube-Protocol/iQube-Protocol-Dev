@@ -1,186 +1,186 @@
-# iQube Protocol - Comprehensive Build Manual
+# iQube Protocol: Comprehensive Build and Deployment Manual
+
+## Table of Contents
+1. [Project Overview](#project-overview)
+2. [Prerequisites](#prerequisites)
+3. [Local Development Setup](#local-development-setup)
+4. [Infrastructure Architecture](#infrastructure-architecture)
+5. [Deployment Environments](#deployment-environments)
+6. [Security Configuration](#security-configuration)
+7. [Monitoring and Logging](#monitoring-and-logging)
+8. [Troubleshooting](#troubleshooting)
 
 ## Project Overview
-The iQube Protocol is a complex web3 application utilizing React, Typescript, and blockchain technologies with support for multiple wallet integrations.
+iQube Protocol is a blockchain-enabled web application designed for secure, cross-chain interactions and NFT management.
+
+### Key Components
+- Frontend: React with Vite
+- Blockchain Integration: Polygon, Avalanche
+- State Management: React Hooks
+- Styling: Tailwind CSS
+- Deployment: DigitalOcean
+- Monitoring: Sentry
 
 ## Prerequisites
-- Node.js (v18.x or later recommended)
-- npm (v9.x or later)
-- Yarn (optional but recommended)
+
+### Software Requirements
+- Node.js (v20.x)
+- npm (v10.x)
 - Git
-- Metamask Browser Extension
-- Thirdweb Wallet
+- Docker
+- Homebrew (macOS)
 
-## Wallet Integration Pathways
-### 1. Metamask Wallet Integration
-- **Dependencies**: 
-  - `ethers.js`
-  - `@metamask/providers`
-  - Custom MetaMask connection utilities
+### Development Tools
+- Visual Studio Code
+- Windsurf IDE
+- GitHub CLI
+- Postman/Insomnia
 
-### 2. Thirdweb Wallet Integration
-- **Dependencies**:
-  - `@thirdweb-dev/react`
-  - `@thirdweb-dev/sdk`
-  - Thirdweb Provider configuration
+### Blockchain Wallets
+- MetaMask
+- WalletConnect
+- Coinbase Wallet
 
-## Environment Setup
+## Local Development Setup
 
-### 1. Clone the Repository
+### 1. Clone Repository
 ```bash
-git clone https://github.com/your-org/iQube-Protocol.git
-cd iQube-Protocol/Front_Endv2
+git clone git@github.com:iQube-Protocol/Front_Endv2.git
+cd Front_Endv2
 ```
 
 ### 2. Install Dependencies
 ```bash
-# Using npm
 npm install
-
-# Or using Yarn
-yarn install
 ```
 
-### 3. Environment Variables
-Create a `.env` file in the project root with the following keys:
+### 3. Environment Configuration
+Create `.env` files in project root:
+- `.env.development`
+- `.env.staging`
+- `.env.production`
+
+#### Sample .env Configuration
 ```
-VITE_PINATA_API_KEY=your_pinata_api_key
-VITE_PINATA_SECRET_KEY=your_pinata_secret_key
-VITE_ENCRYPTION_SERVER_URL=https://your-encryption-server.com
-VITE_POLYGON_CONTRACT_ADDRESS=your_polygon_contract_address
-VITE_THIRDWEB_CLIENT_ID=your_thirdweb_client_id
-VITE_METAMASK_PROJECT_ID=your_metamask_project_id
+VITE_APP_ENV=development
+VITE_API_BASE_URL=https://api.staging.iqube.network
+VITE_BLOCKCHAIN_NETWORK=polygon-mumbai
+VITE_SENTRY_DSN=[YOUR_SENTRY_DSN]
 ```
 
-## Key Dependencies
-
-### Frontend
-- React (v18.x)
-- Vite
-- Typescript
-- Tailwind CSS
-- Axios
-- Ethers.js
-- Thirdweb SDK
-
-### Blockchain Interactions
-- Web3.js
-- Ethers.js
-- Polygon Network SDK
-- IPFS (Pinata) Integration
-
-### Encryption
-- Custom encryption server
-- Crypto-JS
-- Web Crypto API
-
-### State Management
-- React Hooks
-- Context API
-
-## Wallet Connection Strategies
-
-### Metamask Connection
-1. Install MetaMask browser extension
-2. Use `window.ethereum` provider
-3. Implement chain switching
-4. Handle account changes
-
-### Thirdweb Connection
-1. Wrap app with ThirdwebProvider
-2. Use `useConnect()` hook
-3. Support multiple wallet connections
-4. Implement network switching
-
-## Restoration Checklist After Catastrophic Crash
-
-### 1. Reinstall Operating System
-- Ensure latest security updates
-- Install development tools (Xcode for macOS)
-
-### 2. Reinstall Development Environment
+### 4. Start Development Server
 ```bash
-# Install Node.js (use NVM recommended)
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
-nvm install 18
-nvm use 18
-
-# Install Yarn
-npm install -g yarn
-
-# Install global development tools
-npm install -g vite typescript
+npm run dev
 ```
 
-### 3. Recover Project
+## Infrastructure Architecture
+
+### Cloud Provider: DigitalOcean
+- **Staging Server**
+  - 2 vCPU
+  - 4GB RAM
+  - Location: NYC1
+
+- **Production Server**
+  - 4 vCPU
+  - 8GB RAM
+  - Location: SFO3
+
+### Deployment Strategy
+- Containerization with Docker
+- Nginx Reverse Proxy
+- Let's Encrypt SSL
+- Cloudflare CDN
+
+## Deployment Environments
+
+### Branches
+- `main`: Production
+- `staging`: Staging/Testing
+- `development`: Active Development
+
+### Continuous Integration
+GitHub Actions workflow:
+- Lint code
+- Run unit tests
+- Build application
+- Deploy to appropriate environment
+
+## Security Configuration
+
+### API Token Management
+1. Generate tokens for:
+   - DigitalOcean
+   - Cloudflare
+
+2. Secure Storage
 ```bash
-# Clone repository
-git clone [REPOSITORY_URL]
-cd iQube-Protocol/Front_Endv2
-
-# Install dependencies
-yarn install
-
-# Restore environment variables from secure backup
-# IMPORTANT: Never commit .env files to version control
-
-# Verify Thirdweb and MetaMask API keys
-# Regenerate if necessary
+# Use provided manage-tokens.sh script
+/scripts/manage-tokens.sh
 ```
 
-### 4. Blockchain Wallet Restoration
-- Recover MetaMask seed phrase
-- Restore Thirdweb wallet configurations
-- Verify contract addresses
-- Check network connectivity
+### SSL/TLS Configuration
+- Minimum TLS Version: 1.2
+- Cloudflare Full (Strict) Encryption
+- Let's Encrypt Certificates
+
+## Monitoring and Logging
+
+### Error Tracking
+- Sentry Integration
+- Environment-specific error reporting
+- Performance monitoring
+
+### Logging Levels
+- Development: DEBUG
+- Staging: INFO
+- Production: ERROR
 
 ## Troubleshooting
 
 ### Common Issues
-1. Wallet Connection Failures
-   - Check network settings
-   - Verify API keys
-   - Ensure correct chain/network
-
-2. Build Errors
-   - Clear npm/yarn cache
-   - Remove node_modules
+1. Dependency Conflicts
+   - Delete `node_modules`
+   - Run `npm cache clean --force`
    - Reinstall dependencies
 
-3. Encryption Server Issues
-   - Verify server connectivity
-   - Check encryption key rotation
+2. Blockchain Connection
+   - Check MetaMask network
+   - Verify wallet permissions
+   - Restart application
 
-## Security Recommendations
-- Use hardware wallets for significant transactions
-- Enable two-factor authentication
-- Regularly update dependencies
-- Implement comprehensive error logging
-- Use environment-specific configurations
+3. Deployment Failures
+   - Check GitHub Actions logs
+   - Verify environment variables
+   - Confirm server connectivity
 
-## Performance Monitoring
-- Use React DevTools
-- Implement Sentry or similar error tracking
-- Monitor blockchain transaction times
-- Profile React component rendering
+### Support Channels
+- GitHub Issues
+- Discord Community
+- Email: support@iqube.com
 
-## Deployment Checklist
-- Run comprehensive test suite
-- Build production version
-- Deploy to staging environment
-- Perform end-to-end testing
-- Deploy to production
+## Contributing
 
-## Backup Strategy
-- Daily git repository backups
-- Encrypted cloud storage for sensitive configs
-- Offsite backup of critical infrastructure details
+### Code Style
+- Follow ESLint rules
+- Use Prettier for formatting
+- Write comprehensive tests
 
-## Contact & Support
-**Technical Support**: support@iqube-protocol.com
-**Blockchain Specialist**: blockchain@iqube-protocol.com
+### Pull Request Process
+1. Fork repository
+2. Create feature branch
+3. Commit changes
+4. Open pull request to `development`
+
+## Versioning
+Semantic Versioning (SemVer)
+- Major.Minor.Patch
+- Example: 1.2.3
+
+## License
+[Insert License Details]
 
 ---
 
-**Last Updated**: 2024-12-17
+**Last Updated**: 2024-12-19
 **Version**: 1.0.0
