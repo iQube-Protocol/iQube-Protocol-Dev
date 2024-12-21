@@ -45,6 +45,18 @@ jobs:
         cache: 'npm'
     - name: Install Dependencies
       run: npm install
+    - name: Setup Environment
+      run: |
+        if [ "${{ github.ref }}" = "refs/heads/staging" ]; then
+          echo "Using staging environment"
+          cp .env.staging .env
+        elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
+          echo "Using production environment"
+          cp .env.production .env
+        else
+          echo "Using development environment"
+          cp .env.development .env
+        fi
     - name: Build Project
       run: |
         if [ "${{ github.ref }}" = "refs/heads/staging" ]; then
@@ -69,21 +81,23 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: build
-        path: dist
-    - name: Deploy to Netlify
-      uses: nwtgck/actions-netlify@v2.0
+        path: ./dist
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
       with:
-        publish-dir: './dist'
-        production-branch: staging
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        deploy-message: 'Deploy from GitHub Actions'
-        enable-pull-request-comment: true
-        enable-commit-comment: true
-        overwrites-pull-request-comment: true
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+    - name: Deploy to DigitalOcean Droplet
       env:
-        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-      timeout-minutes: 1
+        PRIVATE_KEY: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
+        HOST: ${{ secrets.STAGING_HOST }}
+        USERNAME: ${{ secrets.STAGING_USERNAME }}
+      run: |
+        echo "$PRIVATE_KEY" > private_key
+        chmod 600 private_key
+        rsync -avz -e "ssh -i private_key -o StrictHostKeyChecking=no" \
+          --delete ./dist/ \
+          $USERNAME@$HOST:/var/www/staging.iqube.network/
+        rm -f private_key
 
   deploy-production:
     needs: build
@@ -96,18 +110,20 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: build
-        path: dist
-    - name: Deploy to Netlify
-      uses: nwtgck/actions-netlify@v2.0
+        path: ./dist
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
       with:
-        publish-dir: './dist'
-        production-branch: main
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        deploy-message: 'Deploy from GitHub Actions'
-        enable-pull-request-comment: true
-        enable-commit-comment: true
-        overwrites-pull-request-comment: true
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+    - name: Deploy to DigitalOcean Droplet
       env:
-        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-      timeout-minutes: 1
+        PRIVATE_KEY: ${{ secrets.PRODUCTION_SSH_PRIVATE_KEY }}
+        HOST: ${{ secrets.PRODUCTION_HOST }}
+        USERNAME: ${{ secrets.PRODUCTION_USERNAME }}
+      run: |
+        echo "$PRIVATE_KEY" > private_key
+        chmod 600 private_key
+        rsync -avz -e "ssh -i private_key -o StrictHostKeyChecking=no" \
+          --delete ./dist/ \
+          $USERNAME@$HOST:/var/www/iqube.network/
+        rm -f private_key
