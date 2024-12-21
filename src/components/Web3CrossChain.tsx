@@ -1,31 +1,20 @@
 import { useState } from 'react'
 import { ArrowUpDown } from 'lucide-react'
-export default function Web3CrossChain() {
-  // const chains = [
-  //   {
-  //     name: 'Amoy',
-  //     rpc: 'https://amoy.rpc.thirdweb.com/8dc8e3e2452cdf667e0452a5be2906e7',
-  //     contractAddress: '0xe41221AcBF53b3A84068DDb2aE6ecDf36b999Fda',
-  //   },
-  //   {
-  //     name: 'Avalanche',
-  //     rpc:
-  //       'https://avalanche.rpc.thirdweb.com/8dc8e3e2452cdf667e0452a5be2906e7',
-  //     contractAddress: '0xf4FaF6adC0f1F0630aDdE957713C163d40c20632',
-  //   },
-  // ]
 
+export default function Web3CrossChain() {
   const [fromChain, setFromChain] = useState('Amoy')
   const [toChain, setToChain] = useState('Avalanche')
   const [tokenId, setTokenId] = useState('')
-  // const [destinationAddress] = useState('')
+
   const handleSwap = () => {
     setFromChain(toChain)
     setToChain(fromChain)
   }
 
-  const sameChainTransfer = () => {
+  const sameChainTransfer = async () => {
     try {
+      // TODO: Implement same chain transfer logic
+      throw new Error('Not implemented')
     } catch (error) {
       console.error(error)
     }
@@ -33,6 +22,8 @@ export default function Web3CrossChain() {
 
   const bridgeTransfer = async () => {
     try {
+      // TODO: Implement bridge transfer logic
+      throw new Error('Not implemented')
     } catch (error) {
       console.error(error)
     }
@@ -40,18 +31,12 @@ export default function Web3CrossChain() {
 
   const handleTransfer = (e: React.FormEvent) => {
     e.preventDefault()
-    // Implement transfer logic here
     console.log(`Transferring token ${tokenId} from ${fromChain} to ${toChain}`)
-    /**
-     * logic to transfer token from one chain to another
-     * if same chain, then just transfer
-     * if different chain, then transfer via bridge
-     */
 
     if (fromChain === toChain) {
-      sameChainTransfer()
+      void sameChainTransfer()
     } else {
-      bridgeTransfer()
+      void bridgeTransfer()
     }
   }
 

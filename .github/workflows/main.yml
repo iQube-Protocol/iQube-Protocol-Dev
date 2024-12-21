@@ -70,11 +70,11 @@ jobs:
         name: build
         path: dist
 
-  deploy-staging:
+  deploy:
     needs: build
-    if: github.ref == 'refs/heads/staging'
+    if: github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    environment: staging
+    environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
     steps:
     - uses: actions/checkout@v3
     - name: Download Build
@@ -82,48 +82,18 @@ jobs:
       with:
         name: build
         path: ./dist
-    - name: Install doctl
-      uses: digitalocean/action-doctl@v2
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
       with:
-        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-    - name: Deploy to DigitalOcean Droplet
-      env:
-        PRIVATE_KEY: ${{ secrets.STAGING_SSH_PRIVATE_KEY }}
-        HOST: ${{ secrets.STAGING_HOST }}
-        USERNAME: ${{ secrets.STAGING_USERNAME }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+    - name: Deploy to S3
       run: |
-        echo "$PRIVATE_KEY" > private_key
-        chmod 600 private_key
-        rsync -avz -e "ssh -i private_key -o StrictHostKeyChecking=no" \
-          --delete ./dist/ \
-          $USERNAME@$HOST:/var/www/staging.iqube.network/
-        rm -f private_key
-
-  deploy-production:
-    needs: build
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-    - uses: actions/checkout@v3
-    - name: Download Build
-      uses: actions/download-artifact@v3
-      with:
-        name: build
-        path: ./dist
-    - name: Install doctl
-      uses: digitalocean/action-doctl@v2
-      with:
-        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-    - name: Deploy to DigitalOcean Droplet
-      env:
-        PRIVATE_KEY: ${{ secrets.PRODUCTION_SSH_PRIVATE_KEY }}
-        HOST: ${{ secrets.PRODUCTION_HOST }}
-        USERNAME: ${{ secrets.PRODUCTION_USERNAME }}
-      run: |
-        echo "$PRIVATE_KEY" > private_key
-        chmod 600 private_key
-        rsync -avz -e "ssh -i private_key -o StrictHostKeyChecking=no" \
-          --delete ./dist/ \
-          $USERNAME@$HOST:/var/www/iqube.network/
-        rm -f private_key
+        if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+          aws s3 sync ./dist s3://${{ secrets.PRODUCTION_BUCKET_NAME }} --delete
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.PRODUCTION_DISTRIBUTION_ID }} --paths "/*"
+        else
+          aws s3 sync ./dist s3://${{ secrets.STAGING_BUCKET_NAME }} --delete
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.STAGING_DISTRIBUTION_ID }} --paths "/*"
+        fi

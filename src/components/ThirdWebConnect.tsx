@@ -1,10 +1,8 @@
-// import { useState } from 'react'
 import constants from '../utilities/constants'
 import { createThirdwebClient } from 'thirdweb'
 import {
   ConnectButton,
   useActiveAccount,
-  useSocialProfiles,
 } from 'thirdweb/react'
 
 import { inAppWallet } from 'thirdweb/wallets'
@@ -15,12 +13,7 @@ const client = createThirdwebClient({
 
 export default function ThirdWebConnect() {
   const _account = useActiveAccount()
-  const { data: _profiles } = useSocialProfiles({
-    client,
-    address: _account?.address,
-  })
 
-  // const [account, setAccount] = useState<string | undefined>(undefined)
   const wallets = [
     inAppWallet({
       auth: {
@@ -30,11 +23,6 @@ export default function ThirdWebConnect() {
   ]
   return (
     <ConnectButton
-      // onConnect={(wallet) => {
-      //   const account: any = wallet.getAccount()
-      //   setAccount(account?.address)
-      //   // window.location.href = '/register'
-      // }}
       client={client}
       wallets={wallets}
       connectButton={{
