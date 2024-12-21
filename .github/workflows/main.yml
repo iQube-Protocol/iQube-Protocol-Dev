@@ -21,8 +21,11 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '20.x'
+        cache: 'npm'
     - name: Install Dependencies
-      run: npm ci
+      run: |
+        npm install
+        npm run prepare
     - name: Run Linter
       run: npm run lint
     - name: Run Unit Tests
@@ -39,10 +42,16 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '20.x'
+        cache: 'npm'
     - name: Install Dependencies
-      run: npm ci
+      run: npm install
     - name: Build Project
-      run: npm run build
+      run: |
+        if [ "${{ github.ref }}" = "refs/heads/staging" ]; then
+          npm run build:staging
+        else
+          npm run build
+        fi
     - name: Archive Build
       uses: actions/upload-artifact@v3
       with:
@@ -53,38 +62,52 @@ jobs:
     needs: build
     if: github.ref == 'refs/heads/staging'
     runs-on: ubuntu-latest
+    environment: staging
     steps:
     - uses: actions/checkout@v3
     - name: Download Build
       uses: actions/download-artifact@v3
       with:
         name: build
-    - name: Deploy to Staging
+        path: dist
+    - name: Deploy to Netlify
+      uses: nwtgck/actions-netlify@v2.0
+      with:
+        publish-dir: './dist'
+        production-branch: staging
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        deploy-message: 'Deploy from GitHub Actions'
+        enable-pull-request-comment: true
+        enable-commit-comment: true
+        overwrites-pull-request-comment: true
       env:
-        STAGING_SERVER: ${{ secrets.STAGING_SERVER }}
-        STAGING_USERNAME: ${{ secrets.STAGING_USERNAME }}
-        STAGING_SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
-      run: |
-        echo "$STAGING_SSH_KEY" > deploy_key.pem
-        chmod 600 deploy_key.pem
-        scp -i deploy_key.pem -r ./dist/* $STAGING_USERNAME@$STAGING_SERVER:/var/www/staging.iqube.com/
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+      timeout-minutes: 1
 
   deploy-production:
     needs: build
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    environment: production
     steps:
     - uses: actions/checkout@v3
     - name: Download Build
       uses: actions/download-artifact@v3
       with:
         name: build
-    - name: Deploy to Production
+        path: dist
+    - name: Deploy to Netlify
+      uses: nwtgck/actions-netlify@v2.0
+      with:
+        publish-dir: './dist'
+        production-branch: main
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        deploy-message: 'Deploy from GitHub Actions'
+        enable-pull-request-comment: true
+        enable-commit-comment: true
+        overwrites-pull-request-comment: true
       env:
-        PROD_SERVER: ${{ secrets.PROD_SERVER }}
-        PROD_USERNAME: ${{ secrets.PROD_USERNAME }}
-        PROD_SSH_KEY: ${{ secrets.PROD_SSH_KEY }}
-      run: |
-        echo "$PROD_SSH_KEY" > deploy_key.pem
-        chmod 600 deploy_key.pem
-        scp -i deploy_key.pem -r ./dist/* $PROD_USERNAME@$PROD_SERVER:/var/www/iqube.com/
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+      timeout-minutes: 1
